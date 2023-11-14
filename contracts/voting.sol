@@ -56,6 +56,9 @@ contract election{
 
      mapping(address => Voter) public voters;
 
+     function givevote() public {
+      
+     }
     
 
 

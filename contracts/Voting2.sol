@@ -24,9 +24,22 @@ contract Election {
 
     // Mapping to store voter information
     mapping(address => Voter) public voters;
-
+    
+   //Decleration of Admin
+    address public admin;
+     
+     constructor(){
+      admin = msg.sender;
+     }
+   
+   //Modifier for checking Admin is Same Or Not
+    modifier owner(){
+      require( msg.sender == admin,"Invalid Due to Owner Is Changed");
+      _;
+    }
+   
     // Candidate registration
-    function registerCandidate(string memory _name, uint _number) public {
+    function registerCandidate(string memory _name, uint _number) public owner{
         Candidate memory newCandidate = Candidate({party: _name, numvotes: _number, voteCount: 0});
         candidates.push(newCandidate);
 
@@ -34,8 +47,8 @@ contract Election {
         emit CandidateRegistered(candidates.length - 1, _name, _number);
     }
 
-    // Voooooo
-    function registerVoter(string memory _name, uint _number_id) public {
+    // Voter Registration
+    function registerVoter(string memory _name, uint _number_id) public owner {
         require(!voters[msg.sender].isRegistered, "Voter is already registered.");
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
         voters[msg.sender] = newVoter;
@@ -54,7 +67,7 @@ contract Election {
     mapping(uint => Candidate) public candidateById;
 
     // Voting
-    function vote(uint _candidateId) public {
+    function vote(uint _candidateId) public owner{
         Voter storage voter = voters[msg.sender];
         require(voter.isRegistered, "The voter must be registered.");
         require(!voter.hasVoted, "The voter has already voted.");

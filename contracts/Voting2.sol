@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Election {
 
-    // VOTERS INFORMATION
+    // Voters Information
     struct Voter {
         string name;
         uint number_id;
@@ -12,23 +12,20 @@ contract Election {
         uint votedFor;
     }
 
-    // CANDIDATE INFORMATION
+    // Candidate Information
     struct Candidate {
         string party;
         uint numvotes;
         uint voteCount;
     }
 
-    // DECIDE ADMINISTRATOR OF ELECTION
-    address public administrator;
-
-    // DYNAMIC ARRAY TO STORE NO OF CANDIDATES
+    // Dynamic array to store candidates
     Candidate[] public candidates;
 
     // Mapping to store voter information
     mapping(address => Voter) public voters;
 
-    // CANDIDATE REGISTRATION
+    // Candidate registration
     function registerCandidate(string memory _name, uint _number) public {
         Candidate memory newCandidate = Candidate({party: _name, numvotes: _number, voteCount: 0});
         candidates.push(newCandidate);
@@ -37,7 +34,7 @@ contract Election {
         emit CandidateRegistered(candidates.length - 1, _name, _number);
     }
 
-    // VOTER REGISTRATION
+    // Voooooo
     function registerVoter(string memory _name, uint _number_id) public {
         require(!voters[msg.sender].isRegistered, "Voter is already registered.");
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);

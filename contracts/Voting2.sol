@@ -34,7 +34,7 @@ contract Election {
    
    //Modifier for checking Admin is Same Or Not
     modifier owner(){
-      require( msg.sender == admin,"Invalid Due to Owner Is Changed");
+      require( msg.sender == admin,"Access Denied, Enter correct details for Admin.");
       _;
     }
    

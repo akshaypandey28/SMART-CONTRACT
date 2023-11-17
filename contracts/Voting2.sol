@@ -85,7 +85,8 @@ contract Election {
     }
 
     // Getting the winner of the election
-    function getWinner() public view returns (uint) {
+    //BY SHREYA JHA
+    function getYourWinner() public view returns (uint) {
         uint winnerId = 0;
         uint maxVotes = 0;
 

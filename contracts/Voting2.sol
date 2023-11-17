@@ -80,7 +80,11 @@ contract Election {
 
     // Getting the total number of votes for a candidate
     function getVotes(uint _candidateId) public view returns (uint) {
+        
+        // this ensure that the provided candidate ID is valid
         require(_candidateId < candidates.length, "Invalid candidate.");
+
+        // and finally return the vote count for the specified candidate
         return candidateById[_candidateId].voteCount;
     }
 
@@ -89,7 +93,6 @@ contract Election {
     function getYourWinner() public view returns (uint) {
         uint winnerId = 0;
         uint maxVotes = 0;
-
         for (uint i = 0; i < candidates.length; i++) {
             if (candidateById[i].voteCount > maxVotes) {
                 maxVotes = candidateById[i].voteCount;

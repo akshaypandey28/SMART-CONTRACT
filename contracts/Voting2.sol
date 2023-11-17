@@ -19,6 +19,9 @@ contract Election {
         uint voteCount;
     }
 
+    // Constant for NOTA Option
+    uint constant NOTA_CANDIDATE_ID = 0;
+
     // Dynamic array to store candidates
     Candidate[] public candidates;
 
@@ -39,13 +42,17 @@ contract Election {
     }
    
     // Candidate registration
-    function registerCandidate(string memory _name, uint _number) public owner{
-        Candidate memory newCandidate = Candidate({party: _name, numvotes: _number, voteCount: 0});
-        candidates.push(newCandidate);
+    function registerCandidate(string memory _name, uint _number) public owner{ 
+        // Ensure that NOTA is not registered as a regular candidate
+        require(_number != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
+
+        Candidate memory newCandidate = Candidate({party: _name, numvotes: _number, voteCount: 0}) ;
+        candidates.push(newCandidate) ;
 
         // Emit event for candidate registration
         emit CandidateRegistered(candidates.length - 1, _name, _number);
     }
+
 
     // Voter Registration
     function registerVoter(string memory _name, uint _number_id) public owner {
@@ -68,15 +75,23 @@ contract Election {
 
     // Voting
     function vote(uint _candidateId) public owner{
-        Voter storage voter = voters[msg.sender];
-        require(voter.isRegistered, "The voter must be registered.");
-        require(!voter.hasVoted, "The voter has already voted.");
-        require(_candidateId < candidates.length, "Invalid candidate.");
+        Voter storage voter = voters[msg.sender] ;
+        require(voter.isRegistered, "The voter must be registered.") ;
+        require(!voter.hasVoted, "The voter has already voted.") ;
+        
+        // Allow voting for NOTA
+        if(_candidateId == NOTA_CANDIDATE_ID) {
+            voter.hasVoted = true ;
+            voter.votedFor = NOTA_CANDIDATE_ID ;
+        }else{
+            require(_candidateId < candidates.length, "Invalid candidate.") ;
 
-        voter.hasVoted = true;
-        voter.votedFor = _candidateId;
-        candidateById[_candidateId].voteCount++;
+            voter.hasVoted = true ;
+            voter.votedFor = _candidateId ;
+            candidateById[_candidateId].voteCount++ ;
+        }
     }
+
 
     // Getting the total number of votes for a candidate
     function getVotes(uint _candidateId) public view returns (uint) {

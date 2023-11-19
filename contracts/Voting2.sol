@@ -15,7 +15,7 @@ contract Election {
     // Candidate Information
     struct Candidate {
         string party;
-        uint numvotes;
+        address numberid;
         uint voteCount;
     }
 
@@ -41,16 +41,35 @@ contract Election {
       _;
     }
    
-    // Candidate registration
-    function registerCandidate(string memory _name, uint _number) public owner{ 
-        // Ensure that NOTA is not registered as a regular candidate
-        require(_number != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
+   
+   // Modifier is checking for candidates register ones only for same address
 
-        Candidate memory newCandidate = Candidate({party: _name, numvotes: _number, voteCount: 0}) ;
+    modifier onlyones(address _numberid){
+       require(_numberid != admin,"Admin and Candidate is same Address");     
+         uint count=1;
+        if(candidates.length >=1){   
+            for(uint i=0;i<candidates.length;i++){
+                 if( candidates[i].numberid == _numberid){             // Fetching Candidate number From struct
+                     count=count+1;
+                  }
+            }
+        }        
+       require(count<=1 && candidates.length<=1,"Invalid Doubled Registration");
+       _;
+
+    }
+
+
+    // Candidate registration
+    function registerCandidate(string memory _name, address _numberid) public owner onlyones(_numberid){ 
+        // Ensure that NOTA is not registered as a regular candidate
+       // require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
+
+        Candidate memory newCandidate = Candidate({party: _name, numberid: _numberid, voteCount: 0}) ;
         candidates.push(newCandidate) ;
 
         // Emit event for candidate registration
-        emit CandidateRegistered(candidates.length - 1, _name, _number);
+        emit CandidateRegistered(candidates.length - 1, _name, _numberid);
     }
 
 

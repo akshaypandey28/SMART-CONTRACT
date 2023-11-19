@@ -69,7 +69,7 @@ contract Election {
         candidates.push(newCandidate) ;
 
         // Emit event for candidate registration
-        emit CandidateRegistered(candidates.length - 1, _name, _numberid);
+        //emit CandidateRegistered(candidates.length - 1, _name, _numberid);
     }
 
 

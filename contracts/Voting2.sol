@@ -61,7 +61,7 @@ contract Election {
 
 
     // Candidate registration
-    function registerCandidate(string memory _name, address _numberid) public owner onlyones(_numberid){ 
+    function registerCandidate(string memory _name, uint _number) public owner{ 
         // Ensure that NOTA is not registered as a regular candidate
        // require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
 
@@ -93,7 +93,7 @@ contract Election {
     mapping(uint => Candidate) public candidateById;
 
     // Voting
-    function vote(uint _candidateId) public owner{
+    function vote(uint _candidateId) public {
         Voter storage voter = voters[msg.sender] ;
         require(voter.isRegistered, "The voter must be registered.") ;
         require(!voter.hasVoted, "The voter has already voted.") ;

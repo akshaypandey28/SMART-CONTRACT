@@ -6,7 +6,7 @@ contract Election {
     // Voters Information
     struct Voter {
         string name;
-        uint number_id;
+        address number_id; //changed from type uint to keep simmilar to struct Candidate 
         bool isRegistered;
         bool hasVoted;
         uint votedFor;
@@ -72,9 +72,9 @@ contract Election {
         //emit CandidateRegistered(candidates.length - 1, _name, _numberid);
     }
 
-
+    // By Satyam
     // Voter Registration
-    function registerVoter(string memory _name, uint _number_id) public owner {
+    function registerVoter(string memory _name, address _number_id) public owner {
         require(!voters[msg.sender].isRegistered, "Voter is already registered.");
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
         voters[msg.sender] = newVoter;
@@ -84,7 +84,7 @@ contract Election {
     }
 
     // Event to signal the registration of a new voter
-    event VoterRegistered(address indexed voterAddress, string name, uint number_id);
+    event VoterRegistered(address indexed voterAddress, string name, address number_id);
 
     // Event to signal the registration of a new candidate
     event CandidateRegistered(uint indexed candidateId, string name, uint numvotes);

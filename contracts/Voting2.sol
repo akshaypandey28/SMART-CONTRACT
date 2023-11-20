@@ -9,7 +9,7 @@ contract Election {
         address number_id; //changed from type uint to keep simmilar to struct Candidate 
         bool isRegistered;
         bool hasVoted;
-        address votedFor; //changed here
+        uint votedFor; //changed here
     }
 
     // Candidate Information
@@ -18,9 +18,6 @@ contract Election {
         address numberid;
         uint voteCount;
     }
-
-    // Constant for NOTA Option
-    address constant NOTA_CANDIDATE_ID = address(0) ;
 
     // Dynamic array to store candidates
     Candidate[] public candidates;
@@ -62,9 +59,7 @@ contract Election {
 
     // Candidate registration
     function registerCandidate(string memory _name, address _numberid) public owner onlyones(_numberid){ 
-        // Ensure that NOTA is not registered as a regular candidate
-       require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
-
+    
         Candidate memory newCandidate = Candidate({party: _name, numberid:_numberid, voteCount: 0}) ;
         candidates.push(newCandidate) ;
 
@@ -77,7 +72,7 @@ contract Election {
     // Voter Registration
     function registerVoter(string memory _name, address _number_id) public owner {
         require(!voters[msg.sender].isRegistered, "Voter is already registered.");
-        Voter memory newVoter = Voter(_name, _number_id, true, false, address(0));
+        Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
         voters[msg.sender] = newVoter;
 
         // Emit event for voter registration
@@ -88,32 +83,27 @@ contract Election {
     event VoterRegistered(address indexed voterAddress, string name, address number_id);
 
     // Event to signal the registration of a new candidate
-    event CandidateRegistered(uint indexed candidateId, string name, uint numvotes);
+    event CandidateRegistered(uint indexed candidateId, string name, address numvotes);
 
 
     // Mapping to associate candidate IDs with candidates
     mapping(uint => Candidate) public candidateById;
 
     // Voting
-function vote(address _candidateId) public {
-    Voter storage voter = voters[msg.sender];
-    require(voter.isRegistered, "The voter must be registered.");
-    require(!voter.hasVoted, "The voter has already voted.");
-
-    // Allow voting for NOTA
-    if (_candidateId == NOTA_CANDIDATE_ID) {
-        voter.hasVoted = true;
-        voter.votedFor = NOTA_CANDIDATE_ID;
-        candidateById[(NOTA_CANDIDATE_ID)].voteCount++;
-    } else {
-        require(_candidateId != admin, "Invalid candidate.");
-        require(candidateById[_candidateId].numberid == _candidateId, "Invalid candidate.");
-
-        voter.hasVoted = true;
-        voter.votedFor = _candidateId;
-        candidateById[uint(_candidateId)].voteCount++;
+    // function vote(uint _candidateId) public owner{
+    function vote(uint _candidateId) public {
+        Voter storage voter = voters[msg.sender] ;
+        require(voter.isRegistered, "The voter must be registered.") ;
+        require(!voter.hasVoted, "The voter has already voted.") ;
+        
+        
+            require(_candidateId < candidates.length, "Invalid candidate.") ;
+            voter.hasVoted = true ;
+            voter.votedFor = _candidateId ;
+            candidateById[_candidateId].voteCount++ ;
+        
     }
-}
+
 
 
 

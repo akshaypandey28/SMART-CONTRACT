@@ -71,7 +71,7 @@ contract Election {
     // By Satyam
     // Voter Registration
     function registerVoter(string memory _name, address _number_id) public owner {
-        require(!voters[msg.sender].isRegistered, "Voter is already registered.");
+       // require(!voters[msg.sender].isRegistered, "Voter is already registered."); // commented to remove error
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
         voters[msg.sender] = newVoter;
 

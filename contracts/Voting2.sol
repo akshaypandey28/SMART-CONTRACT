@@ -133,3 +133,12 @@ contract Election {
         return winnerId;
     }
 }
+// Function to calculate the percentage of votes for a candidate
+    function getPercentageForCandidate(string memory _candidateName) public view returns (uint256) {
+        require(bytes(_candidateName).length > 0, "Candidate name cannot be empty");
+        require(votesReceived[_candidateName] >= 0, "Invalid candidate");
+
+        // Calculate the percentage using the formula
+        return (votesReceived[_candidateName] * 100) / totalVotes;
+    }
+

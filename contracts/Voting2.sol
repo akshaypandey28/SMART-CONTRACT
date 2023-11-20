@@ -61,7 +61,7 @@ contract Election {
 
 
     // Candidate registration
-    function registerCandidate(string memory _name, uint _number) public owner{ 
+    function registerCandidate(string memory _name, uint _number) public owner onlyones{ 
         // Ensure that NOTA is not registered as a regular candidate
        // require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
 

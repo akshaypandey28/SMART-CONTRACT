@@ -61,15 +61,15 @@ contract Election {
 
 
     // Candidate registration
-    function registerCandidate(string memory _name, uint _number) public owner onlyones{ 
+    function registerCandidate(string memory _name, address _numberid) public owner onlyones(_numberid){ 
         // Ensure that NOTA is not registered as a regular candidate
-       // require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
+       require(_numberid != NOTA_CANDIDATE_ID, "Invalid candidate ID for NOTA.") ;
 
-        Candidate memory newCandidate = Candidate({party: _name, numberid: _numberid, voteCount: 0}) ;
+        Candidate memory newCandidate = Candidate({party: _name, numberid:_numberid, voteCount: 0}) ;
         candidates.push(newCandidate) ;
 
         // Emit event for candidate registration
-        //emit CandidateRegistered(candidates.length - 1, _name, _numberid);
+        emit CandidateRegistered(candidates.length - 1, _name, _numberid);
     }
 
     // By Satyam

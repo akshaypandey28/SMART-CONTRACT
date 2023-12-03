@@ -22,8 +22,8 @@ contract Election {
     // Dynamic array to store candidates
     Candidate[] public candidates;
 
-    // Mapping to store voter information
-    mapping(address => Voter) public voters;
+    // Dynamic array to store voters
+    Voter[] public voters;
     
    //Decleration of Admin
     address public admin;
@@ -71,16 +71,16 @@ contract Election {
     // By Satyam
     // Voter Registration
     function registerVoter(string memory _name, address _number_id) public owner {
-       // require(!voters[msg.sender].isRegistered, "Voter is already registered."); // commented to remove error
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
-        voters[msg.sender] = newVoter;
+        voters.push(newVoter);
 
         // Emit event for voter registration
-        emit VoterRegistered(msg.sender, _name, _number_id);
+        emit VoterRegistered(_name, _number_id);
     }
 
-    // Event to signal the registration of a new voter
-    event VoterRegistered(address indexed voterAddress, string name, address number_id);
+       // Event to signal the registration of a new voter
+    event VoterRegistered(string name, address number_id);
+
 
     // Event to signal the registration of a new candidate
     event CandidateRegistered(uint indexed candidateId, string name, address numvotes);
@@ -91,21 +91,28 @@ contract Election {
 
     // Voting
     // function vote(uint _candidateId) public owner{
-    function vote(uint _candidateId) public {
-        Voter storage voter = voters[msg.sender] ;
-        require(voter.isRegistered, "The voter must be registered.") ;
-        require(!voter.hasVoted, "The voter has already voted.") ;
-        
-        
-            require(_candidateId < candidates.length, "Invalid candidate.") ;
-            voter.hasVoted = true ;
-            voter.votedFor = _candidateId ;
-            candidateById[_candidateId].voteCount++ ;
-        
+    // Voting
+function vote(uint _candidateId) public {
+    // Find the corresponding voter using msg.sender
+    uint voterIndex;
+    for (uint i = 0; i < voters.length; i++) {
+        if (voters[i].number_id == msg.sender) {
+            voterIndex = i;
+            break;
+        }
     }
 
+    require(voterIndex < voters.length, "Voter not found.");
 
+    Voter storage voter = voters[voterIndex];
+    require(voter.isRegistered, "The voter must be registered.");
+    require(!voter.hasVoted, "The voter has already voted.");
 
+    require(_candidateId < candidates.length, "Invalid candidate.");
+    voter.hasVoted = true;
+    voter.votedFor = _candidateId;
+    candidateById[_candidateId].voteCount++;
+}
 
 
     // Getting the total number of votes for a candidate
@@ -133,6 +140,7 @@ contract Election {
         return winnerId;
     }
 }
+
 // Function to calculate the percentage of votes for a candidate
     function getPercentageForCandidate(string memory _candidateName) public view returns (uint256) {
         require(bytes(_candidateName).length > 0, "Candidate name cannot be empty");
@@ -141,4 +149,3 @@ contract Election {
         // Calculate the percentage using the formula
         return (votesReceived[_candidateName] * 100) / totalVotes;
     }
-

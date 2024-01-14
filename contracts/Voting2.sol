@@ -83,7 +83,7 @@ contract Election {
 
 
     // By Satyam
-    // Voter Registration
+    // Voter Registration + UNIT to ADDRESS type change for all functions except the one by Deepak
     function registerVoter(string memory _name, address _number_id) public owner onlyOneVoter(_number_id){
         Voter memory newVoter = Voter(_name, _number_id, true, false, 0);
         voters.push(newVoter);
